@@ -1,0 +1,48 @@
+---
+title: "Homework2"
+author: "蔡佩芸"
+date: "2019/7/15"
+output: html_document
+---
+**題目**：<br />
+比較近20年來台灣女性的平均工作薪資與結婚年齡的相關性<br />
+**Data Source**：<br />
+1.[薪資平台](https://earnings.dgbas.gov.tw/query_payroll.aspx)<br />
+2.[結婚年齡中位數及平均數](https://www.gender.ey.gov.tw/gecdb/Stat_Statistics_DetailData.aspx?sn=aeFG0R2tHwmrDtITC%2fJSaA%3d%3d&d=m9ww9odNZAz2Rc5Ooj%2fwIQ%3d%3d)<br />
+
+# 第一步：Import data
+```{r}
+library(dplyr)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(reader)
+tidydata = read.csv("tidydata.csv")
+```
+
+```{r}
+tidydata = tidydata%>%
+  mutate(years = gsub("年", "", years))%>%
+  mutate(years = as.numeric(years))
+head(tidydata)
+```
+
+# 第二步：繪製圖形
+使用ggplot描繪出女性平均結婚年齡與女性平均薪資隨著年分變化的趨勢圖<br />
+1.女性平均結婚年齡隨年分的變化
+```{r}
+library(ggplot2)
+ggplot(data = tidydata) +
+  geom_point(aes(x = years, y = 女性平均結婚年齡, color=女性平均結婚年齡))
+```
+
+2.女性平均薪資隨年分的變化
+```{r}
+ggplot(data = tidydata) +
+  geom_point(aes(x = years, y = 女性平均薪資, color=女性平均薪資))
+```
+
