@@ -7,5 +7,4 @@
 ## Schedule
 #### Week1
 #### Week2-1
-[HW2](https://DataScienceProgramming/Week2-1/hw2
-)
+[HW2](https://DataScienceProgramming/Week2-1/hw2)
