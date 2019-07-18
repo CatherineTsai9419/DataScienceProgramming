@@ -7,4 +7,4 @@
 ## Schedule
 #### Week1
 #### Week2-1
-[HW2](https://DataScienceProgramming.github.io/Week2-1/hw2)
+[HW2](https://catherinetsai9419.github.io/DataScienceProgramming/Week2-1/hw2)
