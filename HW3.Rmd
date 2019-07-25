@@ -1,0 +1,96 @@
+---
+title: "HW3"
+author: "CatherineTsai"
+date: "2019/7/25"
+output: html_document
+---
+
+
+```{r}
+library(tidyverse)
+library(rvest)
+library(stringr)
+library(jiebaR)
+library(jiebaR)
+library(tmcn)
+```
+
+
+```{r}
+ptt.url<-"https://www.ptt.cc"
+instant_food.url <-str_c(ptt.url,"/bbs/Instant_Food")
+instant_food.url
+instant_food.session<-html_session(url = instant_food.url)
+instant_food.session
+```
+
+```{r}
+page.latest<-instant_food.session %>%
+html_nodes("a") %>%
+html_attr("href") %>%
+  str_subset("index[0-9]{2,}\\.html") %>%
+  str_extract("[0-9]+") %>%
+  as.numeric()
+link.article<-NULL
+page.length<-5
+for (page.index in page.latest:(page.latest-page.length)) {
+  link<-str_c(instant_food.url,"/index", page.index,".html")
+  print(link)
+  link.article<-c(
+    link.article,
+    instant_food.session %>%
+      jump_to(link) %>%
+      html_nodes("a") %>%
+      html_attr("href") %>%
+      str_subset("[A-z]\\.[0-9]+\\.[A-z]\\.[A-z0-9]+\\.html")
+  )
+}
+```
+
+
+```{r}
+push.table<-tibble()
+article.table<-tibble()
+for(temp.link in link.article){
+  article.url<-str_c(ptt.url, temp.link)
+  temp.html<-instant_food.session %>% jump_to(article.url)
+  article.header<-temp.html %>%
+    html_nodes("span.article-meta-value") %>%
+    html_text()
+  article.author<-article.header[1] %>% str_extract("^[A-z0-9_]+")
+  article.title<-article.header[3]
+  article.datetime<-article.header[4]
+  article.content<-temp.html %>%
+    html_nodes(
+      xpath = '//div[@id="main-content"]/node()[not(self::div|self::span[@class="f2"])]'
+    ) %>%
+    str_c(collapse = "")
+  article.table<-article.table %>%
+    bind_rows(
+      tibble(
+        datetime=article.datetime,
+        title=article.title,
+        author=article.author,
+        content=article.content,
+        url=article.url
+      )
+    )
+}
+```
+
+
+```{r}
+article.table <- article.table %>%
+  mutate(
+    datetime = str_sub(datetime, 5) %>% parse_datetime("%b %d %H:%M:%S %Y"),
+    month = format(datetime, "%m"),
+    day = format(datetime, "%d")
+  ) %>%
+  filter_all(
+    all_vars(!is.na(.))
+  )
+
+article.table
+```
+
+

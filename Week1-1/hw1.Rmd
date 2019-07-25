@@ -1,0 +1,42 @@
+---
+title: "hw1"
+author: "CatherineTsai"
+date: "2019/7/25"
+output: html_document
+---
+高雄地區2018年觀光遊客數量隨著月份變化的資料統計與整理
+前置作業
+```{r}
+library(dplyr)
+library(reader)
+library(lubridate)
+library(ggplot2)
+```
+
+```{r}
+sum<- read.csv("C:/Users/user/Documents/sum.csv")
+head(sum)
+```
+
+將2018年1-12月的資料特別篩選出來
+```{r}
+sum1<-filter(sum, year == 2018)
+head(sum1)
+```
+
+將年月日合併成一個新的column，方便進行製圖
+```{r}
+sum2<-sum1 %>%
+  mutate(date = (paste(year,mon,day,sep="-") %>% ymd()))
+head(sum2,3)
+```
+
+繪出2018年高雄地區旅客人數隨著月份變化的折線圖
+```{r}
+Graph_sum<-ggplot(data=sum2,aes(x=date,y=Number,group=Category))+
+  geom_line(aes(color=Category))+
+  geom_point(size = 4, shape = 22, colour = "darkred", fill = "lightblue")+
+  scale_x_date(date_labels="%b %y",date_breaks  ="1 month")
+print(Graph_sum)
+```
+
